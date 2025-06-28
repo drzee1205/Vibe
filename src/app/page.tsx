@@ -1,5 +1,5 @@
-const Page = () => {
-  return <h1 className="font-bold text-rose-600">Hello World</h1>;
+const Page = async () => {
+  return <div>hello</div>;
 };
 
 export default Page;
