@@ -3,7 +3,6 @@ import { inngest } from "./client";
 import { Sandbox } from "@e2b/code-interpreter";
 import { getSandbox } from "./utils";
 import { z } from "zod";
-import { stderr, stdout } from "process";
 
 export const helloWorld = inngest.createFunction(
   { id: "hello-world" },
@@ -47,6 +46,40 @@ export const helloWorld = inngest.createFunction(
                 return `Command failed ${error} \nstdout: ${buffers.stdout}\nstderror: ${buffers.stderr}`;
               }
             });
+          },
+        }),
+        createTool({
+          name: "createOrUpdateFiles",
+          description: "Create or update files in the sandbox",
+          parameters: z.object({
+            files: z.array(
+              z.object({
+                path: z.string(),
+                content: z.string(),
+              })
+            ),
+          }),
+          handler: async ({ files }, { step, network }) => {
+            const newFiles = await step?.run(
+              "createOrUpdateFiles",
+              async () => {
+                try {
+                  const updatedFiles = network.state.data.files || {};
+                  const sandbox = await getSandbox(sandboxId);
+                  for (const file of files) {
+                    await sandbox.files.write(file.path, file.content);
+                    updatedFiles[file.path] = file.content;
+                  }
+
+                  return updatedFiles;
+                } catch (error) {
+                  return "Error" + error;
+                }
+              }
+            );
+            if (typeof newFiles === "object") {
+              network.state.data.files = newFiles;
+            }
           },
         }),
       ],
