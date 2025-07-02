@@ -1,7 +1,9 @@
-import { openai, createAgent } from "@inngest/agent-kit";
+import { openai, createAgent, createTool } from "@inngest/agent-kit";
 import { inngest } from "./client";
 import { Sandbox } from "@e2b/code-interpreter";
 import { getSandbox } from "./utils";
+import { z } from "zod";
+import { stderr, stdout } from "process";
 
 export const helloWorld = inngest.createFunction(
   { id: "hello-world" },
@@ -16,6 +18,38 @@ export const helloWorld = inngest.createFunction(
       system:
         "You are an expert Next.js developer. You write readable, maintainable code. You write simple Next.js & react snippets",
       model: openai({ model: "gpt-4o" }),
+      tools: [
+        createTool({
+          name: "terminal",
+          description: "Use the terminal",
+          parameters: z.object({
+            command: z.string(),
+          }),
+          handler: async ({ command }, { step }) => {
+            return await step?.run("terminal", async () => {
+              const buffers = { stdout: "", stderr: "" };
+
+              try {
+                const sandbox = await getSandbox(sandboxId);
+                const result = await sandbox.commands.run(command, {
+                  onStdout: (data: string) => {
+                    buffers.stdout += data;
+                  },
+                  onStderr: (data: string) => {
+                    buffers.stderr += data;
+                  },
+                });
+                return result.stdout;
+              } catch (error) {
+                console.error(
+                  `Command failed ${error} \nstdout: ${buffers.stdout}\nstderror: ${buffers.stderr}`
+                );
+                return `Command failed ${error} \nstdout: ${buffers.stdout}\nstderror: ${buffers.stderr}`;
+              }
+            });
+          },
+        }),
+      ],
     });
 
     const { output } = await codeAgent.run(
