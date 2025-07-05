@@ -42,7 +42,7 @@ model Fragment {
   message    Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
   sandboxUrl String
   title      String
-  file       Json
+  files      Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

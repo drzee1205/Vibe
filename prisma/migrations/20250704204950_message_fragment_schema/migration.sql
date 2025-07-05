@@ -22,7 +22,7 @@ CREATE TABLE "Fragment" (
     "messageId" TEXT NOT NULL,
     "sandboxUrl" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "file" JSONB NOT NULL,
+    "files" JSONB NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
