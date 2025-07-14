@@ -3,6 +3,7 @@ import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
 import { MessageCard } from "./message-card";
+import { MessageForm } from "./message-form";
 
 interface Props {
   projectId: string;
@@ -30,6 +31,9 @@ export const MessagesContainer = ({ projectId }: Props) => {
             />
           ))}
         </div>
+      </div>
+      <div className="relative p-3 pt-1">
+        <MessageForm projectId={projectId} />
       </div>
     </div>
   );
