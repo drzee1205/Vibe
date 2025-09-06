@@ -21,6 +21,18 @@ export const codeAgentFunction = inngest.createFunction(
   { id: "code-agent" },
   { event: "code-agent/run" },
   async ({ event, step }) => {
+    const settings = await step.run("load-settings", async () => {
+      return await prisma.appSettings.findFirst();
+    });
+
+    if (settings?.e2bApiKey) {
+      process.env.E2B_API_KEY = settings.e2bApiKey;
+    }
+    if (settings?.zaiApiKey) {
+      process.env.OPENAI_API_KEY = settings.zaiApiKey;
+      process.env.OPENAI_BASE_URL = "https://open.bigmodel.cn/api/paas/v4/";
+    }
+
     const sandboxId = await step.run("get-sandbox-id", async () => {
       const sandbox = await Sandbox.create("vibe-nextjs-test-vibe-1");
       return sandbox.sandboxId;
@@ -30,7 +42,7 @@ export const codeAgentFunction = inngest.createFunction(
       description: "An expert coding agent",
       system: PROMPT,
       model: openai({
-        model: "gpt-4.1",
+        model: "glm-4.5",
         defaultParameters: {
           temperature: 0.1,
         },
