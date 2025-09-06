@@ -29,6 +29,8 @@ export const MessageForm = ({ projectId }: Props) => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       value: "",
     },
