@@ -60,3 +60,12 @@ model Fragment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model AppSettings {
+  id        String   @id @default("default")
+  zaiApiKey String?
+  e2bApiKey String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

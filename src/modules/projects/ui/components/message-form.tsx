@@ -64,7 +64,7 @@ export const MessageForm = ({ projectId }: Props) => {
   return (
     <Form {...form}>
       <form
-        onClick={form.handleSubmit(handleSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className={cn(
           "relative border p-4 pt-1 rounded-xl bg-sidebar dark:bg-sidebar transition-all",
           isFocused && "shadow-xs",
@@ -101,6 +101,7 @@ export const MessageForm = ({ projectId }: Props) => {
             &nbsp;to submit
           </div>
           <Button
+            type="submit"
             disabled={isButtonDisabled}
             className={cn(
               "size-8 rounded-full",
